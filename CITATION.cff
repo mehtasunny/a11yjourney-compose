@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using these metadata."
+title: "A11yJourney Compose: accessible-by-default Jetpack Compose components"
+abstract: >-
+  Jetpack Compose components for Android with accessibility guarantees built
+  in or enforced (required labels, 48dp targets, errors in words, input
+  purpose, large-text layouts, session timeout warnings, radio-group time
+  slots, spoken transit arrivals, status messages, and captioned video),
+  mapped to WCAG 2.1 Level AA, with a demo app audited in CI by A11yJourney.
+type: software
+authors:
+  - given-names: Sunny
+    family-names: Mehta
+    email: sunnykmehta@gmail.com
+repository-code: "https://github.com/mehtasunny/a11yjourney-compose"
+license: MIT
+version: 0.1.0
+keywords:
+  - accessibility
+  - android
+  - jetpack compose
+  - wcag
+  - screen reader
+  - low vision
