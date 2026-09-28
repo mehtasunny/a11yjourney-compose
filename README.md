@@ -4,6 +4,7 @@
 government apps that new U.S. accessibility rules now cover.**
 
 [![ci](https://github.com/mehtasunny/a11yjourney-compose/actions/workflows/ci.yml/badge.svg)](https://github.com/mehtasunny/a11yjourney-compose/actions)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23006689.svg)](https://doi.org/10.5281/zenodo.23006689)
 [![license: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 Most accessibility problems in Android apps come from a few repeated mistakes: an icon
