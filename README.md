@@ -76,9 +76,9 @@ defaults. Provide translations through `A11yTheme(strings = ...)`.
 ## Demo app
 
 `demo/` contains three screens built only from these components: a clinic check-in, a
-trip planner, and a benefits application. Each CI run builds the APK (download it from
-the run's artifacts) and audits every screen with A11yJourney on an emulator; the report
-appears in the run summary.
+trip planner, and a benefits application. Each release has the demo APK attached, and
+every CI run audits each screen with A11yJourney on an emulator; the report appears in
+the run summary.
 
 ```bash
 ./gradlew :demo:installDebug

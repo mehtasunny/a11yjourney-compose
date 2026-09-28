@@ -1,0 +1,29 @@
+name: release
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  demo-apk:
+    name: Attach the demo APK to the release
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Build the demo app
+        run: ./gradlew --no-daemon :demo:assembleDebug
+      - name: Upload it to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          cp demo/build/outputs/apk/debug/demo-debug.apk "a11yjourney-compose-demo-${TAG}.apk"
+          gh release upload "$TAG" "a11yjourney-compose-demo-${TAG}.apk" --clobber

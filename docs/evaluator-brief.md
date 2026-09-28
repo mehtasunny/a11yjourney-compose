@@ -33,9 +33,12 @@ to introduce, and easy to detect when they are introduced anyway.
 
 ## What to try (about 20 minutes)
 
-Install the demo app: download `demo-apk` from the latest successful run on
-the [Actions page](https://github.com/mehtasunny/a11yjourney-compose/actions),
-or build it with `./gradlew :demo:installDebug`.
+Install the demo app: download the `.apk` file attached to the
+[latest release](https://github.com/mehtasunny/a11yjourney-compose/releases/latest)
+and open it on an Android 7.0 or later phone (you may need to allow installs
+from your browser or file manager), or build it with
+`./gradlew :demo:installDebug`. It is a debug build of a demo; it asks for no
+permissions and collects no data.
 
 **With TalkBack on:**
 
