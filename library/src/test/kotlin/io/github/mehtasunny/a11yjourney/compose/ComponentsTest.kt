@@ -55,6 +55,30 @@ class ComponentsTest {
     }
 
     @Test
+    fun reportPolicyNeverCrashesOnABadLabel() {
+        rule.setContent {
+            A11yTheme(policy = A11yPolicy.Report) {
+                IconAction(Icons.Filled.Close, "button1", onClick = {})
+            }
+        }
+        rule.onNodeWithContentDescription("button1").assertHasClickAction()
+    }
+
+    @Test
+    fun reportPolicyAcceptsAFailingColorScheme() {
+        val weak = androidx.compose.material3.lightColorScheme(
+            primary = androidx.compose.ui.graphics.Color(0xFF90CAF9),
+            onPrimary = androidx.compose.ui.graphics.Color.White,
+        )
+        rule.setContent {
+            A11yTheme(colorScheme = weak, policy = A11yPolicy.Report) {
+                ActionButton("Continue", onClick = {})
+            }
+        }
+        rule.onNodeWithText("Continue").assertExists()
+    }
+
+    @Test
     fun actionButtonGrowsWithLargeText() {
         var normal = 0
         var large = 0

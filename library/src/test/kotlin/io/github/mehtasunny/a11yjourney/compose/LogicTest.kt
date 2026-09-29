@@ -49,7 +49,16 @@ class LogicTest {
         assertFalse(isMeaningfulLabel("button1"))
         assertFalse(isMeaningfulLabel("Icon"))
         assertFalse(isMeaningfulLabel("ic_close_v2.png"))
-        assertTrue(runCatching { requireMeaningfulLabel(" ", "X") }.isFailure)
+        assertNull(labelProblem("Swap start and destination", "IconAction"))
+        assertTrue(labelProblem("button1", "IconAction")!!.contains("does not describe"))
+    }
+
+    @Test
+    fun strictPolicyThrowsAndReportPolicyDoesNot() {
+        val strict = runCatching { checkLabel(" ", "IconAction", A11yPolicy.Strict) }
+        assertTrue(strict.exceptionOrNull() is IllegalArgumentException)
+        val report = runCatching { checkLabel(" ", "IconAction", A11yPolicy.Report) }
+        assertTrue(report.isSuccess)
     }
 
     @Test

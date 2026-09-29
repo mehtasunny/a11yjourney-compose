@@ -68,22 +68,31 @@ public val AccessibleDarkColors: ColorScheme = darkColorScheme(
  * Material 3 theme with contrast-checked colors and this library's phrases.
  *
  * With [requireContrast] on (the default), a custom [colorScheme] that fails WCAG 2.1 AA
- * contrast for any pair the components use throws when the theme is first composed, so
- * the problem is found in development rather than by users.
+ * contrast for any pair the components use is caught when the theme is first composed:
+ * under [A11yPolicy.Strict] (debug builds) it throws so the problem is fixed during
+ * development; under [A11yPolicy.Report] (release builds) it logs a warning instead.
+ *
+ * @param policy overrides the default policy for everything inside this theme.
  */
 @Composable
 public fun A11yTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     colorScheme: ColorScheme = if (darkTheme) AccessibleDarkColors else AccessibleLightColors,
     strings: A11yStrings = A11yStrings(),
+    policy: A11yPolicy? = null,
     requireContrast: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    if (requireContrast) {
-        val issues = remember(colorScheme) { auditContrast(colorScheme) }
-        if (issues.isNotEmpty()) requireAccessibleContrast(colorScheme)
-    }
-    CompositionLocalProvider(LocalA11yStrings provides strings) {
+    CompositionLocalProvider(
+        LocalA11yStrings provides strings,
+        LocalA11yPolicy provides (policy ?: LocalA11yPolicy.current),
+    ) {
+        if (requireContrast) {
+            val issues = remember(colorScheme) { auditContrast(colorScheme) }
+            if (issues.isNotEmpty()) {
+                enforce(contrastMessage(issues), currentA11yPolicy()) { IllegalStateException(it) }
+            }
+        }
         MaterialTheme(colorScheme = colorScheme, content = content)
     }
 }

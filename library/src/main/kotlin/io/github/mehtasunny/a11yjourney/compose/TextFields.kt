@@ -91,7 +91,7 @@ public fun LabeledTextField(
     imeAction: ImeAction = ImeAction.Next,
     keyboardType: KeyboardType = purpose.keyboardType(),
 ) {
-    requireMeaningfulLabel(label, "LabeledTextField")
+    checkLabel(label, "LabeledTextField", currentA11yPolicy())
     val strings = LocalA11yStrings.current
     val shownLabel = if (required) "$label (${strings.required})" else label
     val autofill = purpose.contentTypeOrNull()

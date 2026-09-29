@@ -69,7 +69,7 @@ public fun DateEntryField(
     hint: String? = LocalA11yStrings.current.dateExample,
     isBirthDate: Boolean = false,
 ) {
-    requireMeaningfulLabel(label, "DateEntryField")
+    checkLabel(label, "DateEntryField", currentA11yPolicy())
     val strings = LocalA11yStrings.current
     val digits = { raw: String, max: Int -> raw.filter(Char::isDigit).take(max) }
 

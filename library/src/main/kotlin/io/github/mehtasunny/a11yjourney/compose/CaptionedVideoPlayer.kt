@@ -88,7 +88,7 @@ public fun CaptionedVideoPlayer(
     modifier: Modifier = Modifier,
     transcript: String? = null,
 ) {
-    requireMeaningfulLabel(title, "CaptionedVideoPlayer")
+    checkLabel(title, "CaptionedVideoPlayer", currentA11yPolicy())
     val strings = LocalA11yStrings.current
     val context = LocalContext.current
     val hasCaptions = video is CaptionedVideo.WithCaptions

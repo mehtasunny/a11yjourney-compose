@@ -69,9 +69,10 @@ public fun auditContrast(scheme: ColorScheme): List<ContrastIssue> {
 /** Throws [IllegalStateException] listing every pair in [scheme] that fails. */
 public fun requireAccessibleContrast(scheme: ColorScheme) {
     val issues = auditContrast(scheme)
-    check(issues.isEmpty()) {
-        "Color scheme fails WCAG 2.1 AA contrast: " + issues.joinToString { i ->
-            "${i.pair} is ${String.format(Locale.US, "%.2f", i.ratio)}:1, needs ${i.required}:1"
-        }
-    }
+    check(issues.isEmpty()) { contrastMessage(issues) }
 }
+
+internal fun contrastMessage(issues: List<ContrastIssue>): String =
+    "Color scheme fails WCAG 2.1 AA contrast: " + issues.joinToString { i ->
+        "${i.pair} is ${String.format(Locale.US, "%.2f", i.ratio)}:1, needs ${i.required}:1"
+    }

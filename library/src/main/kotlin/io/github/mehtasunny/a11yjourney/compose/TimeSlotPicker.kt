@@ -65,7 +65,7 @@ public fun TimeSlotPicker(
     label: String,
     modifier: Modifier = Modifier,
 ) {
-    requireMeaningfulLabel(label, "TimeSlotPicker")
+    checkLabel(label, "TimeSlotPicker", currentA11yPolicy())
     Column(modifier = modifier.fillMaxWidth()) {
         Text(text = label, style = MaterialTheme.typography.titleSmall)
         Spacer(modifier = Modifier.size(8.dp))

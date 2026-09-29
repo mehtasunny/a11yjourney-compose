@@ -31,7 +31,7 @@ public fun ActionButton(
     enabled: Boolean = true,
     emphasis: ButtonEmphasis = ButtonEmphasis.Primary,
 ) {
-    requireMeaningfulLabel(text, "ActionButton")
+    checkLabel(text, "ActionButton", currentA11yPolicy())
     val sized = modifier.heightIn(min = MinTouchTarget).widthIn(min = MinTouchTarget)
     val label: @Composable () -> Unit = { Text(text = text, textAlign = TextAlign.Center) }
     when (emphasis) {
@@ -56,7 +56,7 @@ public fun IconAction(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    requireMeaningfulLabel(label, "IconAction")
+    checkLabel(label, "IconAction", currentA11yPolicy())
     IconButton(onClick = onClick, modifier = modifier.size(MinTouchTarget), enabled = enabled) {
         Icon(imageVector = icon, contentDescription = label)
     }

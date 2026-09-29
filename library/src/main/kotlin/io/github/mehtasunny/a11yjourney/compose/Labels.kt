@@ -15,12 +15,13 @@ public fun isMeaningfulLabel(label: String): Boolean {
     return trimmed.isNotEmpty() && !GENERIC.matches(trimmed) && !FILENAME.containsMatchIn(trimmed)
 }
 
-/** Fails fast, during development, when a component is given a label that says nothing. */
-internal fun requireMeaningfulLabel(label: String, component: String) {
-    require(label.isNotBlank()) {
-        "$component needs a label that a screen reader can announce."
-    }
-    require(isMeaningfulLabel(label)) {
-        "$component label \"$label\" does not describe what it is or does."
-    }
+/**
+ * Why [label] will not work for a screen-reader user, or null when it is fine. The
+ * components apply this under an [A11yPolicy]: an exception in development, a logged
+ * warning in production.
+ */
+public fun labelProblem(label: String, component: String): String? = when {
+    label.isBlank() -> "$component needs a label that a screen reader can announce."
+    !isMeaningfulLabel(label) -> "$component label \"$label\" does not describe what it is or does."
+    else -> null
 }
