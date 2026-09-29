@@ -1,4 +1,4 @@
-cff-version: 1.2.0
+cff-version: 0.1.2
 message: "If you use this software, please cite it using these metadata."
 title: "A11yJourney Compose: accessible-by-default Jetpack Compose components"
 abstract: >-
@@ -14,16 +14,8 @@ authors:
     email: sunnykmehta@gmail.com
 repository-code: "https://github.com/mehtasunny/a11yjourney-compose"
 license: MIT
-version: 0.1.1
+version: 0.1.2
 date-released: 2026-09-29
-doi: 10.5281/zenodo.23006689
-identifiers:
-  - type: doi
-    value: 10.5281/zenodo.23006689
-    description: All versions (always resolves to the latest)
-  - type: doi
-    value: 10.5281/zenodo.23006690
-    description: Version 0.1.0
 keywords:
   - accessibility
   - android

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.mehtasunny"
-version = "0.1.1"
+version = "0.1.2"
 
 android {
     namespace = "io.github.mehtasunny.a11yjourney.compose"

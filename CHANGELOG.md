@@ -2,6 +2,11 @@
 
 Format follows [Keep a Changelog](https://keepachangelog.com/), versioning SemVer.
 
+## [0.1.2] - 2026-09-29
+### Fixed
+- CITATION.cff no longer carries a DOI field, which kept the 0.1.1 release from
+  being archived on Zenodo. No code changes.
+
 ## [0.1.1] - 2026-09-29
 ### Added
 - `A11yPolicy`: label and contrast checks throw in debuggable builds and log a

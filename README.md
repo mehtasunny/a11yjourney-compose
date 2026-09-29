@@ -19,7 +19,7 @@ It is the prevention half of a two-part project. The detection half,
 Android app. In this repository's CI, A11yJourney audits the demo app on an emulator,
 so each half is tested by the other.
 
-> **Status: 0.1.1, early.** The components below work and are covered by Compose
+> **Status: 0.1.2, early.** The components below work and are covered by Compose
 > semantics tests. They have not yet been evaluated by assistive-technology users or
 > used in a production app. Feedback from people who rely on TalkBack, switch access,
 > or large text is the most useful thing you can give this project.
@@ -73,7 +73,7 @@ dependencyResolutionManagement {
 
 // app/build.gradle.kts
 dependencies {
-    implementation("com.github.mehtasunny:a11yjourney-compose:v0.1.1")
+    implementation("com.github.mehtasunny:a11yjourney-compose:v0.1.2")
 }
 ```
 
