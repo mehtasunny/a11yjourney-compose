@@ -60,6 +60,20 @@ def build(log_path: str) -> None:
 
 
 def audit(report_dir: str) -> None:
+    tests = failures = 0
+    for path in glob.glob("library/build/outputs/androidTest-results/connected/**/*.xml",
+                          recursive=True):
+        root = ET.parse(path).getroot()
+        suites = [root] if root.tag == "testsuite" else root.findall("testsuite")
+        for suite in suites:
+            tests += int(suite.get("tests", 0))
+            failures += int(suite.get("failures", 0)) + int(suite.get("errors", 0))
+            for case in suite.iter("testcase"):
+                for bad in list(case.findall("failure")) + list(case.findall("error")):
+                    emit("error", f"Google checks {case.get('name')}",
+                         (bad.get("message") or bad.text or "")[:900])
+    emit("notice", "Google Accessibility Test Framework",
+         f"{tests} instrumented tests, {failures} failed")
     for path in sorted(glob.glob(f"{report_dir}/*.json")):
         data = json.loads(pathlib.Path(path).read_text())
         s = data["summary"]

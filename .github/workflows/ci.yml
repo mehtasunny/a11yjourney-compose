@@ -17,7 +17,7 @@ jobs:
       - name: Unit and Compose semantics tests, lint, demo build
         run: |
           set -o pipefail
-          ./gradlew --no-daemon --continue :library:testDebugUnitTest :library:lintDebug :demo:assembleDebug :demo:lintDebug 2>&1 | tee gradle.log
+          ./gradlew --no-daemon --continue :library:testDebugUnitTest :library:lintDebug :library:publishReleasePublicationToMavenLocal :demo:assembleDebug :demo:lintDebug 2>&1 | tee gradle.log
       - name: Annotate results
         if: always()
         run: python3 scripts/ci_annotate.py build gradle.log
@@ -37,7 +37,7 @@ jobs:
           path: demo/build/outputs/apk/debug/demo-debug.apk
 
   audit-demo:
-    name: Audit the demo app with A11yJourney on an emulator
+    name: Google accessibility checks and A11yJourney audit on an emulator
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -47,6 +47,11 @@ jobs:
         with:
           name: demo-apk
           path: apk
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v6
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
@@ -65,7 +70,9 @@ jobs:
           target: google_apis
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: bash scripts/audit-demo.sh apk/demo-debug.apk
+          script: |
+            ./gradlew --no-daemon :library:connectedDebugAndroidTest
+            bash scripts/audit-demo.sh apk/demo-debug.apk
       - name: Annotate audit results
         if: always()
         run: python3 scripts/ci_annotate.py audit reports
@@ -77,4 +84,5 @@ jobs:
           path: |
             captures/
             reports/
+            library/build/reports/androidTests/
           if-no-files-found: ignore

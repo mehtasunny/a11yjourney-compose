@@ -21,7 +21,7 @@ for screen in home clinic trip benefits; do
   adb shell am force-stop "$PKG"
   adb shell am start -W -n "$PKG/.MainActivity" --es screen "$screen" > /dev/null
   sleep 5
-  if ! a11yjourney capture --name "$screen" --out captures 2> "reports/$screen.capture-error.txt"; then
+  if ! a11yjourney capture --name "$screen" --out captures --keyboard 2> "reports/$screen.capture-error.txt"; then
     echo "::error title=Capture $screen::$(tr '\n' ' ' < "reports/$screen.capture-error.txt" | cut -c1-900)"
     continue
   fi
