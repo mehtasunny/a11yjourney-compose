@@ -2,23 +2,25 @@
 
 Each component lists what it guarantees, how the guarantee is enforced, and the
 WCAG 2.1 success criteria it supports. "Enforced" means the code rejects the
-mistake (a failed `require` during development, or a type that cannot express
-it); "built in" means the accessible behavior is the default and needs no
-configuration.
+mistake: a type that cannot express it, or a check that follows `A11yPolicy`
+(throws in debuggable builds, logs a warning once in release builds, so it never
+crashes an app in production). "Built in" means the accessible behavior is the
+default and needs no configuration.
 
 ## Foundation
 
 **`A11yTheme`, `AccessibleLightColors`, `AccessibleDarkColors`**
 - Every text color pair used by the components is at least 4.5:1, control
   outlines at least 3:1 (1.4.3, 1.4.11). Built in; checked by unit tests.
-- A custom color scheme that fails any of those pairs throws when first
-  composed. Enforced (`requireContrast = true` by default); `auditContrast()`
-  lists the failing pairs.
+- A custom color scheme that fails any of those pairs is caught when first
+  composed under `A11yPolicy` (`requireContrast = true` by default);
+  `auditContrast()` lists the failing pairs.
 - All phrases come from `A11yStrings`, provided through the theme.
 
 **`ActionButton`, `IconAction`**
 - A label is required and must say something: blank labels, placeholder
-  names ("button1", "icon"), and image file names are rejected. Enforced.
+  names ("button1", "icon"), and image file names are rejected under
+  `A11yPolicy`. Enforced.
 - Minimum 48 by 48dp target. Built in.
 - Button text wraps and the button grows at large font sizes (1.4.4). Built in;
   tested at 200% font scale.
@@ -91,6 +93,11 @@ configuration.
   can be expanded below the video.
 
 ## What the tests check
+
+Every component also runs through Google's Accessibility Test Framework on an
+emulator in CI (`library/src/androidTest`, via Compose's
+`enableAccessibilityChecks()`).
+
 
 `library/src/test` runs on the JVM with Robolectric. `LogicTest` covers
 contrast math, label rules, date validation, countdown rounding, the session

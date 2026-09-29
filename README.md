@@ -19,7 +19,7 @@ It is the prevention half of a two-part project. The detection half,
 Android app. In this repository's CI, A11yJourney audits the demo app on an emulator,
 so each half is tested by the other.
 
-> **Status: 0.1.0, early.** The components below work and are covered by Compose
+> **Status: 0.1.1, early.** The components below work and are covered by Compose
 > semantics tests. They have not yet been evaluated by assistive-technology users or
 > used in a production app. Feedback from people who rely on TalkBack, switch access,
 > or large text is the most useful thing you can give this project.
@@ -28,7 +28,7 @@ so each half is tested by the other.
 
 | Component | What it guarantees | WCAG 2.1 |
 |---|---|---|
-| `A11yTheme` | Light and dark colors where every text pair is at least 4.5:1 and every control outline 3:1. A custom scheme that fails is rejected when first composed. | 1.4.3, 1.4.11 |
+| `A11yTheme` | Light and dark colors where every text pair is at least 4.5:1 and every control outline 3:1. A custom scheme that fails is caught when first composed (see enforcement below). | 1.4.3, 1.4.11 |
 | `ActionButton`, `IconAction` | A label is required and checked (no "button1", no file names). 48dp minimum target. Text wraps and the button grows at large font sizes. | 2.5.5 (AAA), 4.1.2, 1.4.4 |
 | `ScreenHeading`, `StepIndicator` | Titles exposed as headings so users can jump between sections. "Step 2 of 4" is read with the step title as one heading. | 1.3.1, 2.4.6 |
 | `LabeledTextField` | A visible label that never disappears. Autofill purpose declared. Errors written out with an icon, exposed as an error state, and announced. | 1.3.5, 3.3.1, 3.3.2, 1.4.1 |
@@ -42,15 +42,39 @@ so each half is tested by the other.
 
 Details and design notes: [docs/components.md](docs/components.md).
 
+## Enforcement: strict in development, never a crash in production
+
+Checks such as "this label says nothing" or "this color scheme fails contrast" follow
+an `A11yPolicy`:
+
+- **`Strict`** throws, so the problem is found and fixed during development. It is the
+  default in debuggable builds.
+- **`Report`** logs a warning once (tag `A11yJourney`) and keeps going. It is the
+  default in release builds, so a label that comes from a server or a translation file
+  can never crash an app in production.
+
+Override it for a subtree with `A11yTheme(policy = ...)` or `LocalA11yPolicy`.
+Guarantees that live in the type system, such as `CaptionedVideo` requiring captions,
+apply in every build.
+
 ## Quick start
 
-The library is not yet published to Maven Central. Until it is, include it as a source
-module:
+Add JitPack and the library:
 
 ```kotlin
 // settings.gradle.kts
-include(":a11yjourney-compose")
-project(":a11yjourney-compose").projectDir = file("path/to/a11yjourney-compose/library")
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven("https://jitpack.io")
+    }
+}
+
+// app/build.gradle.kts
+dependencies {
+    implementation("com.github.mehtasunny:a11yjourney-compose:v0.1.1")
+}
 ```
 
 ```kotlin
@@ -92,16 +116,57 @@ If you work in accessibility and are willing to look at this work, the
 [evaluator brief](docs/evaluator-brief.md) is a 30-minute walkthrough: what to install,
 what to try with TalkBack and large text, and what the known limits are.
 
-## Building
+## Building and testing
 
-Requires JDK 17 and the Android SDK (compileSdk 35).
+Requires JDK 17 and the Android SDK (compileSdk 37). Built with Android Gradle Plugin 9.4 and Kotlin 2.4.
 
 ```bash
 ./gradlew :library:testDebugUnitTest :library:lintDebug :demo:assembleDebug
+./gradlew :library:connectedDebugAndroidTest    # with a device or emulator attached
 ```
 
-The tests run on the JVM with Robolectric and check each component's semantics: labels,
-roles, states, headings, live regions, focus movement, and behavior at 200% font scale.
+Two layers of tests run in CI:
+
+- **Semantics tests** on the JVM with Robolectric check each guarantee: labels, roles,
+  states, headings, live regions, focus movement, and behavior at 200% font scale.
+- **Google's Accessibility Test Framework** runs over every component on an emulator,
+  through Compose's `enableAccessibilityChecks()`. Any error-level result (missing
+  label, low contrast, small touch target, traversal order) fails the build.
+
+## How this compares
+
+This library builds on existing work and fills a narrow gap:
+
+- **[Material 3 for Compose](https://developer.android.com/develop/ui/compose/designsystems/material3)**
+  already gets many things right, including minimum touch targets and correct roles.
+  These components wrap Material rather than replace it.
+- **Google's [Accessibility Test Framework](https://github.com/google/Accessibility-Test-Framework-for-Android)**,
+  available in Compose tests through
+  [`enableAccessibilityChecks()`](https://developer.android.com/develop/ui/compose/accessibility/testing),
+  in [Espresso](https://developer.android.com/training/testing/espresso/accessibility-checking),
+  and in [Accessibility Scanner](https://support.google.com/accessibility/android/answer/6376570),
+  detects problems at test time. Use it in your app's tests; this library runs it too.
+  Android Studio's Compose UI Check runs the same checks on previews at several font
+  sizes.
+- **Government design systems with native mobile code** exist:
+  [GOV.UK One Login's Compose components](https://github.com/govuk-one-login/mobile-android-ui)
+  (buttons, headings, radios, dialogs), [HMRC's Android components](https://github.com/hmrc/android-components)
+  (including text inputs with errors), and the U.S. Department of Veterans Affairs'
+  [React Native component library](https://github.com/department-of-veterans-affairs/va-mobile-library).
+  They are branded for their services and do not enforce accessibility at the API.
+- **[CVS Health's Compose accessibility techniques](https://github.com/cvs-health/android-compose-accessibility-techniques)**
+  is an excellent sample app showing dozens of accessible patterns. It is meant to learn
+  from rather than to add as a dependency.
+- The form-journey patterns here (error summary, three-part date input, timeout
+  warning) come from the web versions in the
+  [GOV.UK Design System](https://design-system.service.gov.uk/components/error-summary/)
+  and the [CMS Design System](https://design.cms.gov/v/5.0.2/components/idle-timeout/).
+
+What this library adds: accessibility enforced at the component API (labels, contrast,
+captions by type, the timeout warning window), native Compose versions of those
+public-service form patterns, and components for health and transit screens
+(appointment slots, arrivals read as sentences, throttled live updates). It has not yet
+been evaluated by assistive-technology users; that is the next step.
 
 ## License
 
