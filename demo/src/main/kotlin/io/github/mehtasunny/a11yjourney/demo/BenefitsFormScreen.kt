@@ -1,6 +1,5 @@
 package io.github.mehtasunny.a11yjourney.demo
 
-import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -11,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
 import io.github.mehtasunny.a11yjourney.compose.ActionButton
 import io.github.mehtasunny.a11yjourney.compose.CaptionedVideo
 import io.github.mehtasunny.a11yjourney.compose.CaptionedVideoPlayer
@@ -36,7 +36,7 @@ fun BenefitsFormScreen() {
     var errors by remember { mutableStateOf(emptyList<FieldError>()) }
 
     fun errorFor(id: String) = errors.firstOrNull { it.fieldId == id }?.message
-    fun raw(id: Int) = Uri.parse("android.resource://${context.packageName}/$id")
+    fun raw(id: Int) = "android.resource://${context.packageName}/$id".toUri()
 
     StepIndicator(current = 1, total = 3, title = "About you")
     CaptionedVideoPlayer(
